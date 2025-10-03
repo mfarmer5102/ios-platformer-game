@@ -217,8 +217,8 @@ class GameScene: SKScene {
         
         // Add label
         let leftLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
-        leftLabel.text = "←"
-        leftLabel.fontSize = 24
+        leftLabel.text = "LEFT"
+        leftLabel.fontSize = 16
         leftLabel.fontColor = .white
         leftLabel.position = CGPoint.zero
         leftLabel.zPosition = 3
@@ -235,34 +235,16 @@ class GameScene: SKScene {
         
         // Add label
         let rightLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
-        rightLabel.text = "→"
-        rightLabel.fontSize = 24
+        rightLabel.text = "RIGHT"
+        rightLabel.fontSize = 16
         rightLabel.fontColor = .white
         rightLabel.position = CGPoint.zero
         rightLabel.zPosition = 3
         rightButton.addChild(rightLabel)
         
-        // Jump button
-        jumpButton = SKSpriteNode(color: .red, size: CGSize(width: buttonWidth, height: buttonHeight))
-        jumpButton.position = CGPoint(x: startX + buttonWidth * 2, y: startY)
-        jumpButton.name = "jumpButton"
-        jumpButton.alpha = 0.8
-        jumpButton.zPosition = 1
-        buttonContainer.addChild(jumpButton)
-        addButtonBorder(to: jumpButton)
-        
-        // Add label
-        let jumpLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
-        jumpLabel.text = "↑"
-        jumpLabel.fontSize = 24
-        jumpLabel.fontColor = .white
-        jumpLabel.position = CGPoint.zero
-        jumpLabel.zPosition = 3
-        jumpButton.addChild(jumpLabel)
-        
-        // Pause button
+        // Start button (moved to position 3)
         pauseButton = SKSpriteNode(color: .gray, size: CGSize(width: buttonWidth, height: buttonHeight))
-        pauseButton.position = CGPoint(x: startX + buttonWidth * 3, y: startY)
+        pauseButton.position = CGPoint(x: startX + buttonWidth * 2, y: startY)
         pauseButton.name = "pauseButton"
         pauseButton.alpha = 0.8
         pauseButton.zPosition = 1
@@ -271,12 +253,30 @@ class GameScene: SKScene {
         
         // Add label
         let pauseLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
-        pauseLabel.text = "⏸"
-        pauseLabel.fontSize = 20
+        pauseLabel.text = "START"
+        pauseLabel.fontSize = 16
         pauseLabel.fontColor = .white
         pauseLabel.position = CGPoint.zero
         pauseLabel.zPosition = 3
         pauseButton.addChild(pauseLabel)
+        
+        // Jump button (moved to position 4)
+        jumpButton = SKSpriteNode(color: .red, size: CGSize(width: buttonWidth, height: buttonHeight))
+        jumpButton.position = CGPoint(x: startX + buttonWidth * 3, y: startY)
+        jumpButton.name = "jumpButton"
+        jumpButton.alpha = 0.8
+        jumpButton.zPosition = 1
+        buttonContainer.addChild(jumpButton)
+        addButtonBorder(to: jumpButton)
+        
+        // Add label
+        let jumpLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
+        jumpLabel.text = "JUMP"
+        jumpLabel.fontSize = 16
+        jumpLabel.fontColor = .white
+        jumpLabel.position = CGPoint.zero
+        jumpLabel.zPosition = 3
+        jumpButton.addChild(jumpLabel)
         
         NSLog("Button setup complete - positions:")
         NSLog("Left: \(leftButton.position)")
