@@ -177,6 +177,16 @@ class GameScene: SKScene {
     }
     
     
+    func addButtonBorder(to button: SKSpriteNode) {
+        // Create a border by drawing a rectangle outline
+        let border = SKShapeNode(rect: CGRect(x: -button.size.width/2, y: -button.size.height/2, width: button.size.width, height: button.size.height))
+        border.strokeColor = .black
+        border.lineWidth = 1
+        border.fillColor = .clear
+        border.zPosition = 2
+        button.addChild(border)
+    }
+    
     func setupControls() {
         NSLog("Setting up fixed UI button system")
         
@@ -187,14 +197,13 @@ class GameScene: SKScene {
         // Add to camera so buttons stay fixed to screen
         gameCamera.addChild(buttonContainer)
         
-        // Button dimensions
-        let buttonWidth: CGFloat = 80
+        // Button dimensions - each button takes 25% of screen width
+        let buttonWidth: CGFloat = size.width / 4  // 25% of screen width
         let buttonHeight: CGFloat = 80
-        let buttonSpacing: CGFloat = 20
         let bottomMargin: CGFloat = 5
         
         // Calculate starting position (bottom left of screen)
-        let startX = -size.width/2 + buttonWidth/2 + buttonSpacing
+        let startX = -size.width/2 + buttonWidth/2
         let startY = -size.height/2 + buttonHeight/2 + bottomMargin
         
         // Left button
@@ -204,6 +213,7 @@ class GameScene: SKScene {
         leftButton.alpha = 0.8
         leftButton.zPosition = 1
         buttonContainer.addChild(leftButton)
+        addButtonBorder(to: leftButton)
         
         // Add label
         let leftLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
@@ -211,16 +221,17 @@ class GameScene: SKScene {
         leftLabel.fontSize = 24
         leftLabel.fontColor = .white
         leftLabel.position = CGPoint.zero
-        leftLabel.zPosition = 2
+        leftLabel.zPosition = 3
         leftButton.addChild(leftLabel)
         
         // Right button
         rightButton = SKSpriteNode(color: .blue, size: CGSize(width: buttonWidth, height: buttonHeight))
-        rightButton.position = CGPoint(x: startX + buttonWidth + buttonSpacing, y: startY)
+        rightButton.position = CGPoint(x: startX + buttonWidth, y: startY)
         rightButton.name = "rightButton"
         rightButton.alpha = 0.8
         rightButton.zPosition = 1
         buttonContainer.addChild(rightButton)
+        addButtonBorder(to: rightButton)
         
         // Add label
         let rightLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
@@ -228,16 +239,17 @@ class GameScene: SKScene {
         rightLabel.fontSize = 24
         rightLabel.fontColor = .white
         rightLabel.position = CGPoint.zero
-        rightLabel.zPosition = 2
+        rightLabel.zPosition = 3
         rightButton.addChild(rightLabel)
         
         // Jump button
         jumpButton = SKSpriteNode(color: .red, size: CGSize(width: buttonWidth, height: buttonHeight))
-        jumpButton.position = CGPoint(x: startX + (buttonWidth + buttonSpacing) * 2, y: startY)
+        jumpButton.position = CGPoint(x: startX + buttonWidth * 2, y: startY)
         jumpButton.name = "jumpButton"
         jumpButton.alpha = 0.8
         jumpButton.zPosition = 1
         buttonContainer.addChild(jumpButton)
+        addButtonBorder(to: jumpButton)
         
         // Add label
         let jumpLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
@@ -245,16 +257,17 @@ class GameScene: SKScene {
         jumpLabel.fontSize = 24
         jumpLabel.fontColor = .white
         jumpLabel.position = CGPoint.zero
-        jumpLabel.zPosition = 2
+        jumpLabel.zPosition = 3
         jumpButton.addChild(jumpLabel)
         
         // Pause button
         pauseButton = SKSpriteNode(color: .gray, size: CGSize(width: buttonWidth, height: buttonHeight))
-        pauseButton.position = CGPoint(x: startX + (buttonWidth + buttonSpacing) * 3, y: startY)
+        pauseButton.position = CGPoint(x: startX + buttonWidth * 3, y: startY)
         pauseButton.name = "pauseButton"
         pauseButton.alpha = 0.8
         pauseButton.zPosition = 1
         buttonContainer.addChild(pauseButton)
+        addButtonBorder(to: pauseButton)
         
         // Add label
         let pauseLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
@@ -262,7 +275,7 @@ class GameScene: SKScene {
         pauseLabel.fontSize = 20
         pauseLabel.fontColor = .white
         pauseLabel.position = CGPoint.zero
-        pauseLabel.zPosition = 2
+        pauseLabel.zPosition = 3
         pauseButton.addChild(pauseLabel)
         
         NSLog("Button setup complete - positions:")
@@ -457,7 +470,7 @@ class GameScene: SKScene {
     func updatePlayerMovement() {
         NSLog("Movement state - Left: \(isLeftPressed), Right: \(isRightPressed)")
         
-        // Check for button input first
+        // Check for button input
         if isLeftPressed && !isRightPressed {
             NSLog("Moving left")
             player.moveLeft()
@@ -468,9 +481,9 @@ class GameScene: SKScene {
             NSLog("Both buttons pressed - stopping")
             player.stopMoving()
         } else {
-            // No buttons pressed - use automatic movement as fallback
-            NSLog("No buttons pressed - auto-walking right")
-            player.moveRight()
+            // No buttons pressed - stop moving
+            NSLog("No buttons pressed - stopping")
+            player.stopMoving()
         }
     }
     
