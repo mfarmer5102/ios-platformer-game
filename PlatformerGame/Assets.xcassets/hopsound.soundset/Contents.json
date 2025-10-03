@@ -1,0 +1,15 @@
+{
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "audio-compression" : "aac"
+  },
+  "sounds" : [
+    {
+      "filename" : "hopsound.m4a",
+      "idiom" : "universal"
+    }
+  ]
+}

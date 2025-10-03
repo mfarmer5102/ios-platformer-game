@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.SKScene" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.SKKitPlugin" version="22131"/>
+    </dependencies>
+    <objects>
+        <scene sceneID="tne-QT-ifu">
+            <objects/>
+            <point key="canvasLocation" x="213" y="676"/>
+        </scene>
+    </objects>
+</document>
