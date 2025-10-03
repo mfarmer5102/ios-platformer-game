@@ -1,4 +1,5 @@
 import SpriteKit
+import AVFoundation
 import GameplayKit
 
 // Physics categories for collision detection
@@ -22,6 +23,11 @@ class GameScene: SKScene {
     var score = 0
     var lives = 3
     var isGamePaused = false
+    
+    // Audio players
+    var coinSoundPlayer: AVAudioPlayer?
+    var gameOverSoundPlayer: AVAudioPlayer?
+    var squashSoundPlayer: AVAudioPlayer?
     
     // Input state for simultaneous button presses
     var isLeftPressed = false
@@ -76,6 +82,7 @@ class GameScene: SKScene {
         setupCamera()
         setupUI()
         setupControls()
+        setupAudio()
         setupPauseMenu()
         setupWinCondition()
         NSLog("GameScene: Setup complete, player position: \(player.position)")
@@ -294,6 +301,55 @@ class GameScene: SKScene {
         player = Player()
         player.position = CGPoint(x: -400, y: 100)
         addChild(player)
+    }
+    
+    func setupAudio() {
+        // Set up audio session
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to set up audio session: \(error)")
+        }
+        
+        // Load coin sound
+        if let coinSoundURL = Bundle.main.url(forResource: "coin", withExtension: "m4a") {
+            do {
+                coinSoundPlayer = try AVAudioPlayer(contentsOf: coinSoundURL)
+                coinSoundPlayer?.prepareToPlay()
+                print("Loaded coin sound successfully")
+            } catch {
+                print("Error loading coin sound: \(error)")
+            }
+        } else {
+            print("Could not find coin.m4a")
+        }
+        
+        // Load game over sound
+        if let gameOverSoundURL = Bundle.main.url(forResource: "gameover", withExtension: "m4a") {
+            do {
+                gameOverSoundPlayer = try AVAudioPlayer(contentsOf: gameOverSoundURL)
+                gameOverSoundPlayer?.prepareToPlay()
+                print("Loaded game over sound successfully")
+            } catch {
+                print("Error loading game over sound: \(error)")
+            }
+        } else {
+            print("Could not find gameover.m4a")
+        }
+        
+        // Load squash sound
+        if let squashSoundURL = Bundle.main.url(forResource: "squash", withExtension: "m4a") {
+            do {
+                squashSoundPlayer = try AVAudioPlayer(contentsOf: squashSoundURL)
+                squashSoundPlayer?.prepareToPlay()
+                print("Loaded squash sound successfully")
+            } catch {
+                print("Error loading squash sound: \(error)")
+            }
+        } else {
+            print("Could not find squash.m4a")
+        }
     }
     
     func setupCamera() {
@@ -753,7 +809,12 @@ extension GameScene: SKPhysicsContactDelegate {
             
             addScore(100)
             
-            // Play star collection sound effect here
+            // Play star collection sound effect
+            print("Attempting to play coin sound...")
+            coinSoundPlayer?.stop()
+            coinSoundPlayer?.currentTime = 0
+            coinSoundPlayer?.play()
+            print("Coin sound played")
         }
     }
     
@@ -767,6 +828,13 @@ extension GameScene: SKPhysicsContactDelegate {
                 killEnemy(enemyNode)
                 addScore(200)
                 player.physicsBody?.velocity.dy = 300 // Bounce effect
+                
+                // Play squash sound when defeating enemy
+                print("Attempting to play squash sound...")
+                squashSoundPlayer?.stop()
+                squashSoundPlayer?.currentTime = 0
+                squashSoundPlayer?.play()
+                print("Squash sound played")
             } else {
                 // Player hit enemy from side - take damage
                 player.takeDamage()

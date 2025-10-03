@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1DD925AF2E8F742100AF8B02 /* gameover.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1DD925AC2E8F742100AF8B02 /* gameover.m4a */; };
+		1DD925B02E8F742100AF8B02 /* squash.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1DD925AE2E8F742100AF8B02 /* squash.m4a */; };
+		1DD925B12E8F742100AF8B02 /* ouch.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1DD925AD2E8F742100AF8B02 /* ouch.m4a */; };
+		1DD925B22E8F742100AF8B02 /* coin.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1DD925AB2E8F742100AF8B02 /* coin.m4a */; };
 		A1234567890ABCDEF001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1234567890ABCDEF002 /* AppDelegate.swift */; };
 		A1234567890ABCDEF003 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = A1234567890ABCDEF004 /* GameScene.sks */; };
 		A1234567890ABCDEF005 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = A1234567890ABCDEF006 /* Actions.sks */; };
@@ -24,6 +28,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1DD925AB2E8F742100AF8B02 /* coin.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = coin.m4a; sourceTree = "<group>"; };
+		1DD925AC2E8F742100AF8B02 /* gameover.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = gameover.m4a; sourceTree = "<group>"; };
+		1DD925AD2E8F742100AF8B02 /* ouch.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = ouch.m4a; sourceTree = "<group>"; };
+		1DD925AE2E8F742100AF8B02 /* squash.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = squash.m4a; sourceTree = "<group>"; };
 		A1234567890ABCDEF002 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1234567890ABCDEF004 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		A1234567890ABCDEF006 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -58,6 +66,10 @@
 			children = (
 				A1234567890ABCDEF033 /* PlatformerGame */,
 				A1234567890ABCDEF034 /* Products */,
+				1DD925AB2E8F742100AF8B02 /* coin.m4a */,
+				1DD925AC2E8F742100AF8B02 /* gameover.m4a */,
+				1DD925AD2E8F742100AF8B02 /* ouch.m4a */,
+				1DD925AE2E8F742100AF8B02 /* squash.m4a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -153,6 +165,10 @@
 				A1234567890ABCDEF003 /* GameScene.sks in Resources */,
 				A1234567890ABCDEF013 /* Assets.xcassets in Resources */,
 				A1234567890ABCDEF015 /* LaunchScreen.storyboard in Resources */,
+				1DD925AF2E8F742100AF8B02 /* gameover.m4a in Resources */,
+				1DD925B02E8F742100AF8B02 /* squash.m4a in Resources */,
+				1DD925B12E8F742100AF8B02 /* ouch.m4a in Resources */,
+				1DD925B22E8F742100AF8B02 /* coin.m4a in Resources */,
 				A1234567890ABCDEF005 /* Actions.sks in Resources */,
 				A1234567890ABCDEF025 /* hopsound.m4a in Resources */,
 			);

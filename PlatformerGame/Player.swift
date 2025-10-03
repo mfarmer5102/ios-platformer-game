@@ -1,4 +1,5 @@
 import SpriteKit
+import AVFoundation
 
 class Player: SKSpriteNode {
     
@@ -27,6 +28,10 @@ class Player: SKSpriteNode {
     var isInvincible = false
     var invincibilityDuration: TimeInterval = 3.0
     
+    // Audio properties
+    var hopSoundPlayer: AVAudioPlayer?
+    var ouchSoundPlayer: AVAudioPlayer?
+    
     init() {
         // Load walking textures
         walk1Texture = SKTexture(imageNamed: "walk1")
@@ -37,6 +42,7 @@ class Player: SKSpriteNode {
         
         setupPhysics()
         setupAnimations()
+        setupAudio()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -58,6 +64,42 @@ class Player: SKSpriteNode {
         idleTextures = [walk1Texture]
         runTextures = [walk1Texture, walk2Texture]
         jumpTexture = walk1Texture // Use walk1 for jumping too
+    }
+    
+    func setupAudio() {
+        // Set up audio session
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to set up audio session: \(error)")
+        }
+        
+        // Load hop sound
+        if let hopSoundURL = Bundle.main.url(forResource: "hopsound", withExtension: "m4a") {
+            do {
+                hopSoundPlayer = try AVAudioPlayer(contentsOf: hopSoundURL)
+                hopSoundPlayer?.prepareToPlay()
+                print("Loaded hop sound successfully")
+            } catch {
+                print("Error loading hop sound: \(error)")
+            }
+        } else {
+            print("Could not find hopsound.m4a")
+        }
+        
+        // Load ouch sound
+        if let ouchSoundURL = Bundle.main.url(forResource: "ouch", withExtension: "m4a") {
+            do {
+                ouchSoundPlayer = try AVAudioPlayer(contentsOf: ouchSoundURL)
+                ouchSoundPlayer?.prepareToPlay()
+                print("Loaded ouch sound successfully")
+            } catch {
+                print("Error loading ouch sound: \(error)")
+            }
+        } else {
+            print("Could not find ouch.m4a")
+        }
     }
     
     func createColorTexture(_ color: UIColor) -> SKTexture {
@@ -98,7 +140,10 @@ class Player: SKSpriteNode {
             
             // Play jump sound effect
             print("Attempting to play hop sound...")
-            run(SKAction.playSoundFileNamed("hopsound", waitForCompletion: false))
+            hopSoundPlayer?.stop()
+            hopSoundPlayer?.currentTime = 0
+            hopSoundPlayer?.play()
+            print("Hop sound played")
         } else {
             print("Player jump attempted but not on ground")
         }
@@ -178,6 +223,13 @@ class Player: SKSpriteNode {
     func takeDamage() {
         // Don't take damage if already invincible
         guard !isInvincible else { return }
+        
+        // Play ouch sound when taking damage
+        print("Attempting to play ouch sound...")
+        ouchSoundPlayer?.stop()
+        ouchSoundPlayer?.currentTime = 0
+        ouchSoundPlayer?.play()
+        print("Ouch sound played")
         
         if isSuper {
             // Revert to small Mario
