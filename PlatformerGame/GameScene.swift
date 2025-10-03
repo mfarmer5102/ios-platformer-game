@@ -65,6 +65,11 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         NSLog("GameScene: didMove called")
+        
+        // Enable user interaction for the scene
+        isUserInteractionEnabled = true
+        NSLog("GameScene: isUserInteractionEnabled set to \(isUserInteractionEnabled)")
+        
         setupPhysics()
         setupLevel()
         setupPlayer()
@@ -171,114 +176,100 @@ class GameScene: SKScene {
         return SKTexture(image: image)
     }
     
-    func addButtonOutline(to button: SKSpriteNode) {
-        // Create a black outline border
-        let outline = SKShapeNode(rect: CGRect(x: -button.size.width/2, y: -button.size.height/2, width: button.size.width, height: button.size.height))
-        outline.strokeColor = .black
-        outline.lineWidth = 1.0
-        outline.fillColor = .clear
-        outline.zPosition = 1
-        button.addChild(outline)
-    }
-    
-    func isPointInButton(_ point: CGPoint, button: SKSpriteNode) -> Bool {
-        // Convert button position to camera space and check if point is within button bounds
-        let buttonFrame = CGRect(
-            x: button.position.x - button.size.width/2,
-            y: button.position.y - button.size.height/2,
-            width: button.size.width,
-            height: button.size.height
-        )
-        let isInside = buttonFrame.contains(point)
-        print("Checking button \(button.name ?? "unknown"): point \(point) in frame \(buttonFrame) = \(isInside)")
-        return isInside
-    }
     
     func setupControls() {
-        // Calculate button dimensions - each button takes 25% of screen width
-        let buttonWidth = size.width * 0.25
-        let buttonHeight: CGFloat = 100
+        NSLog("Setting up fixed UI button system")
         
-        // Left button (25% width)
+        // Create a container node for all buttons that will be fixed to screen
+        let buttonContainer = SKNode()
+        buttonContainer.name = "buttonContainer"
+        buttonContainer.zPosition = 1000
+        // Add to camera so buttons stay fixed to screen
+        gameCamera.addChild(buttonContainer)
+        
+        // Button dimensions
+        let buttonWidth: CGFloat = 80
+        let buttonHeight: CGFloat = 80
+        let buttonSpacing: CGFloat = 20
+        let bottomMargin: CGFloat = 5
+        
+        // Calculate starting position (bottom left of screen)
+        let startX = -size.width/2 + buttonWidth/2 + buttonSpacing
+        let startY = -size.height/2 + buttonHeight/2 + bottomMargin
+        
+        // Left button
         leftButton = SKSpriteNode(color: .blue, size: CGSize(width: buttonWidth, height: buttonHeight))
-        leftButton.position = CGPoint(x: -size.width/2 + buttonWidth/2, y: -size.height/2 + 80)
-        leftButton.alpha = 1.0  // Make fully visible
-        leftButton.zPosition = 100
+        leftButton.position = CGPoint(x: startX, y: startY)
         leftButton.name = "leftButton"
-        leftButton.isUserInteractionEnabled = true
-        addButtonOutline(to: leftButton)
+        leftButton.alpha = 0.8
+        leftButton.zPosition = 1
+        buttonContainer.addChild(leftButton)
         
-        // Right button (25% width)
-        rightButton = SKSpriteNode(color: .blue, size: CGSize(width: buttonWidth, height: buttonHeight))
-        rightButton.position = CGPoint(x: -size.width/2 + buttonWidth * 1.5, y: -size.height/2 + 80)
-        rightButton.alpha = 1.0  // Make fully visible
-        rightButton.zPosition = 100
-        rightButton.name = "rightButton"
-        rightButton.isUserInteractionEnabled = true
-        addButtonOutline(to: rightButton)
-        
-        // Pause button (25% width)
-        pauseButton = SKSpriteNode(color: .gray, size: CGSize(width: buttonWidth, height: buttonHeight))
-        pauseButton.position = CGPoint(x: -size.width/2 + buttonWidth * 2.5, y: -size.height/2 + 80)
-        pauseButton.alpha = 1.0  // Make fully visible
-        pauseButton.zPosition = 100
-        pauseButton.name = "pauseButton"
-        pauseButton.isUserInteractionEnabled = true
-        addButtonOutline(to: pauseButton)
-        
-        // Jump button (25% width)
-        jumpButton = SKSpriteNode(color: .red, size: CGSize(width: buttonWidth, height: buttonHeight))
-        jumpButton.position = CGPoint(x: -size.width/2 + buttonWidth * 3.5, y: -size.height/2 + 80)
-        jumpButton.alpha = 1.0  // Make fully visible
-        jumpButton.zPosition = 100
-        jumpButton.name = "jumpButton"
-        jumpButton.isUserInteractionEnabled = true
-        addButtonOutline(to: jumpButton)
-        
-        // Add pause symbol
-        let pauseLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
-        pauseLabel.text = "START"
-        pauseLabel.fontSize = 16
-        pauseLabel.fontColor = .white
-        pauseLabel.position = CGPoint.zero
-        pauseButton.addChild(pauseLabel)
-        
-        // Add labels to other buttons for debugging
+        // Add label
         let leftLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
-        leftLabel.text = "LEFT"
-        leftLabel.fontSize = 16
+        leftLabel.text = "←"
+        leftLabel.fontSize = 24
         leftLabel.fontColor = .white
         leftLabel.position = CGPoint.zero
+        leftLabel.zPosition = 2
         leftButton.addChild(leftLabel)
         
+        // Right button
+        rightButton = SKSpriteNode(color: .blue, size: CGSize(width: buttonWidth, height: buttonHeight))
+        rightButton.position = CGPoint(x: startX + buttonWidth + buttonSpacing, y: startY)
+        rightButton.name = "rightButton"
+        rightButton.alpha = 0.8
+        rightButton.zPosition = 1
+        buttonContainer.addChild(rightButton)
+        
+        // Add label
         let rightLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
-        rightLabel.text = "RIGHT"
-        rightLabel.fontSize = 16
+        rightLabel.text = "→"
+        rightLabel.fontSize = 24
         rightLabel.fontColor = .white
         rightLabel.position = CGPoint.zero
+        rightLabel.zPosition = 2
         rightButton.addChild(rightLabel)
         
+        // Jump button
+        jumpButton = SKSpriteNode(color: .red, size: CGSize(width: buttonWidth, height: buttonHeight))
+        jumpButton.position = CGPoint(x: startX + (buttonWidth + buttonSpacing) * 2, y: startY)
+        jumpButton.name = "jumpButton"
+        jumpButton.alpha = 0.8
+        jumpButton.zPosition = 1
+        buttonContainer.addChild(jumpButton)
+        
+        // Add label
         let jumpLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
-        jumpLabel.text = "JUMP"
-        jumpLabel.fontSize = 16
+        jumpLabel.text = "↑"
+        jumpLabel.fontSize = 24
         jumpLabel.fontColor = .white
         jumpLabel.position = CGPoint.zero
+        jumpLabel.zPosition = 2
         jumpButton.addChild(jumpLabel)
         
-        // Add control buttons to camera so they stay in place relative to screen
-        gameCamera.addChild(leftButton)
-        gameCamera.addChild(rightButton)
-        gameCamera.addChild(pauseButton)
-        gameCamera.addChild(jumpButton)
+        // Pause button
+        pauseButton = SKSpriteNode(color: .gray, size: CGSize(width: buttonWidth, height: buttonHeight))
+        pauseButton.position = CGPoint(x: startX + (buttonWidth + buttonSpacing) * 3, y: startY)
+        pauseButton.name = "pauseButton"
+        pauseButton.alpha = 0.8
+        pauseButton.zPosition = 1
+        buttonContainer.addChild(pauseButton)
         
-        // Debug: Print button positions
-        print("Button positions:")
-        print("Left button: \(leftButton.position)")
-        print("Right button: \(rightButton.position)")
-        print("Pause button: \(pauseButton.position)")
-        print("Jump button: \(jumpButton.position)")
-        print("Scene size: \(size)")
-        print("Camera position: \(gameCamera.position)")
+        // Add label
+        let pauseLabel = SKLabelNode(fontNamed: "Arial-BoldMT")
+        pauseLabel.text = "⏸"
+        pauseLabel.fontSize = 20
+        pauseLabel.fontColor = .white
+        pauseLabel.position = CGPoint.zero
+        pauseLabel.zPosition = 2
+        pauseButton.addChild(pauseLabel)
+        
+        NSLog("Button setup complete - positions:")
+        NSLog("Left: \(leftButton.position)")
+        NSLog("Right: \(rightButton.position)")
+        NSLog("Jump: \(jumpButton.position)")
+        NSLog("Pause: \(pauseButton.position)")
     }
     
     func setupLevel() {
@@ -378,17 +369,20 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        NSLog("NEW TOUCH SYSTEM: touchesBegan called with \(touches.count) touches")
+        
         for touch in touches {
             let location = touch.location(in: self)
-            let cameraLocation = touch.location(in: gameCamera)
+            NSLog("Touch at scene location: \(location)")
             
-            print("Touch detected at location: \(location), camera location: \(cameraLocation)")
-            
-            // Handle pause menu touches
+            // Handle pause menu touches (pause menu is child of camera, so use camera coordinates)
             if !pauseMenu.isHidden {
-                if resumeButton.contains(location) {
+                let cameraLocation = touch.location(in: gameCamera)
+                if resumeButton.contains(cameraLocation) {
+                    NSLog("RESUME BUTTON PRESSED!")
                     resumeGame()
-                } else if restartButton.contains(location) {
+                } else if restartButton.contains(cameraLocation) {
+                    NSLog("RESTART BUTTON PRESSED!")
                     restartGame()
                 }
                 return
@@ -406,59 +400,55 @@ class GameScene: SKScene {
                 return
             }
             
-            // Check if touch is on control buttons - allow simultaneous presses
-            // Convert screen touch to camera coordinates
-            let screenTouch = touch.location(in: self)
-            let cameraTouch = CGPoint(x: screenTouch.x - gameCamera.position.x, y: screenTouch.y - gameCamera.position.y)
+            // Check button touches using camera coordinates (since buttons are children of camera)
+            let cameraLocation = touch.location(in: gameCamera)
             
-            if pauseButton.contains(cameraTouch) {
-                print("Pause button pressed!")
-                pauseGame()
-            }
-            
-            if leftButton.contains(cameraTouch) {
-                print("Left button pressed at \(cameraTouch)")
+            if leftButton.contains(cameraLocation) {
+                NSLog("LEFT BUTTON PRESSED!")
                 isLeftPressed = true
                 updatePlayerMovement()
             }
             
-            if rightButton.contains(cameraTouch) {
-                print("Right button pressed at \(cameraTouch)")
+            if rightButton.contains(cameraLocation) {
+                NSLog("RIGHT BUTTON PRESSED!")
                 isRightPressed = true
                 updatePlayerMovement()
             }
             
-            if jumpButton.contains(cameraTouch) {
-                print("Jump button pressed at \(cameraTouch)")
+            if jumpButton.contains(cameraLocation) {
+                NSLog("JUMP BUTTON PRESSED!")
                 isJumpPressed = true
                 player.jump()
+            }
+            
+            if pauseButton.contains(cameraLocation) {
+                NSLog("PAUSE BUTTON PRESSED!")
+                pauseGame()
             }
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        NSLog("NEW TOUCH SYSTEM: touchesEnded called")
+        
         for touch in touches {
-            let location = touch.location(in: self)
+            // Handle button releases using camera coordinates
+            let cameraLocation = touch.location(in: gameCamera)
             
-            // Handle button releases for simultaneous input
-            // Convert screen touch to camera coordinates
-            let screenTouch = touch.location(in: self)
-            let cameraTouch = CGPoint(x: screenTouch.x - gameCamera.position.x, y: screenTouch.y - gameCamera.position.y)
-            
-            if leftButton.contains(cameraTouch) {
-                print("Left button released at \(cameraTouch)")
+            if leftButton.contains(cameraLocation) {
+                NSLog("LEFT BUTTON RELEASED!")
                 isLeftPressed = false
                 updatePlayerMovement()
             }
             
-            if rightButton.contains(cameraTouch) {
-                print("Right button released at \(cameraTouch)")
+            if rightButton.contains(cameraLocation) {
+                NSLog("RIGHT BUTTON RELEASED!")
                 isRightPressed = false
                 updatePlayerMovement()
             }
             
-            if jumpButton.contains(cameraTouch) {
-                print("Jump button released")
+            if jumpButton.contains(cameraLocation) {
+                NSLog("JUMP BUTTON RELEASED!")
                 isJumpPressed = false
             }
         }
@@ -467,27 +457,21 @@ class GameScene: SKScene {
     func updatePlayerMovement() {
         NSLog("Movement state - Left: \(isLeftPressed), Right: \(isRightPressed)")
         
-        // TEMPORARY: Auto-walk right for testing
-        NSLog("Auto-walking right")
-        player.moveRight()
-        
-        // Original movement logic (commented out for now)
-        /*
+        // Check for button input first
         if isLeftPressed && !isRightPressed {
-            print("Moving left")
+            NSLog("Moving left")
             player.moveLeft()
         } else if isRightPressed && !isLeftPressed {
-            print("Moving right")
+            NSLog("Moving right")
             player.moveRight()
-        } else {
-            if isLeftPressed && isRightPressed {
-                print("Both buttons pressed - stopping")
-            } else {
-                print("No buttons pressed - stopping")
-            }
+        } else if isLeftPressed && isRightPressed {
+            NSLog("Both buttons pressed - stopping")
             player.stopMoving()
+        } else {
+            // No buttons pressed - use automatic movement as fallback
+            NSLog("No buttons pressed - auto-walking right")
+            player.moveRight()
         }
-        */
     }
     
     override func update(_ currentTime: TimeInterval) {
