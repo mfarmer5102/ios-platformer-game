@@ -29,7 +29,9 @@ class Level {
         for i in -100...200 {
             for j in 1...3 {
                 let undergroundTile = createGroundTile()
-                undergroundTile.color = .brown
+                // Keep the dirt texture but make it slightly darker for underground effect
+                undergroundTile.color = UIColor(red: 0.7, green: 0.5, blue: 0.3, alpha: 1.0)
+                undergroundTile.colorBlendFactor = 0.3
                 undergroundTile.position = CGPoint(x: CGFloat(i) * tileSize, y: groundY - CGFloat(j) * tileSize)
                 scene.addChild(undergroundTile)
             }
@@ -200,7 +202,9 @@ class Level {
     // MARK: - Tile Creation Methods
     
     func createGroundTile() -> SKSpriteNode {
-        let tile = SKSpriteNode(color: .green, size: CGSize(width: tileSize, height: tileSize))
+        // Create a dirt-colored texture programmatically
+        let dirtTexture = createDirtTexture()
+        let tile = SKSpriteNode(texture: dirtTexture, size: CGSize(width: tileSize, height: tileSize))
         
         // Add physics body
         tile.physicsBody = SKPhysicsBody(rectangleOf: tile.size)
@@ -211,8 +215,53 @@ class Level {
         return tile
     }
     
+    func createDirtTexture() -> SKTexture {
+        let size = CGSize(width: tileSize, height: tileSize)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let image = renderer.image { context in
+            let cgContext = context.cgContext
+            
+            // Create a dirt-like pattern with multiple brown shades
+            let colors = [
+                UIColor(red: 0.6, green: 0.4, blue: 0.2, alpha: 1.0), // Dark brown
+                UIColor(red: 0.7, green: 0.5, blue: 0.3, alpha: 1.0), // Medium brown
+                UIColor(red: 0.8, green: 0.6, blue: 0.4, alpha: 1.0), // Light brown
+                UIColor(red: 0.5, green: 0.3, blue: 0.1, alpha: 1.0)  // Very dark brown
+            ]
+            
+            // Fill with base dirt color
+            cgContext.setFillColor(colors[1].cgColor)
+            cgContext.fill(CGRect(origin: .zero, size: size))
+            
+            // Add random dirt spots
+            for _ in 0..<8 {
+                let spotSize = CGFloat.random(in: 2...6)
+                let x = CGFloat.random(in: 0...(size.width - spotSize))
+                let y = CGFloat.random(in: 0...(size.height - spotSize))
+                let color = colors.randomElement()!
+                
+                cgContext.setFillColor(color.cgColor)
+                cgContext.fillEllipse(in: CGRect(x: x, y: y, width: spotSize, height: spotSize))
+            }
+            
+            // Add some texture lines
+            cgContext.setStrokeColor(UIColor(red: 0.4, green: 0.2, blue: 0.1, alpha: 0.3).cgColor)
+            cgContext.setLineWidth(0.5)
+            
+            for i in 0..<3 {
+                let y = CGFloat(i) * size.height / 3 + CGFloat.random(in: -2...2)
+                cgContext.move(to: CGPoint(x: 0, y: y))
+                cgContext.addLine(to: CGPoint(x: size.width, y: y))
+                cgContext.strokePath()
+            }
+        }
+        return SKTexture(image: image)
+    }
+    
     func createPlatformTile() -> SKSpriteNode {
-        let tile = SKSpriteNode(color: .orange, size: CGSize(width: tileSize, height: tileSize/2))
+        // Create a wood-colored texture programmatically
+        let woodTexture = createWoodTexture()
+        let tile = SKSpriteNode(texture: woodTexture, size: CGSize(width: tileSize, height: tileSize/2))
         
         // Add physics body
         tile.physicsBody = SKPhysicsBody(rectangleOf: tile.size)
@@ -221,6 +270,60 @@ class Level {
         tile.physicsBody?.friction = 0.6
         
         return tile
+    }
+    
+    func createWoodTexture() -> SKTexture {
+        let size = CGSize(width: tileSize, height: tileSize/2)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let image = renderer.image { context in
+            let cgContext = context.cgContext
+            
+            // Create a wood-like pattern with multiple brown shades
+            let colors = [
+                UIColor(red: 0.6, green: 0.4, blue: 0.2, alpha: 1.0), // Dark wood
+                UIColor(red: 0.7, green: 0.5, blue: 0.3, alpha: 1.0), // Medium wood
+                UIColor(red: 0.8, green: 0.6, blue: 0.4, alpha: 1.0), // Light wood
+                UIColor(red: 0.5, green: 0.3, blue: 0.1, alpha: 1.0)  // Very dark wood
+            ]
+            
+            // Fill with base wood color
+            cgContext.setFillColor(colors[1].cgColor)
+            cgContext.fill(CGRect(origin: .zero, size: size))
+            
+            // Create wood grain lines (horizontal)
+            cgContext.setStrokeColor(UIColor(red: 0.4, green: 0.2, blue: 0.1, alpha: 0.6).cgColor)
+            cgContext.setLineWidth(1.0)
+            
+            for i in 0..<Int(size.height/4) {
+                let y = CGFloat(i) * 4 + CGFloat.random(in: -1...1)
+                cgContext.move(to: CGPoint(x: 0, y: y))
+                cgContext.addLine(to: CGPoint(x: size.width, y: y))
+                cgContext.strokePath()
+            }
+            
+            // Add some wood knots and imperfections
+            for _ in 0..<3 {
+                let knotSize = CGFloat.random(in: 2...4)
+                let x = CGFloat.random(in: 0...(size.width - knotSize))
+                let y = CGFloat.random(in: 0...(size.height - knotSize))
+                let color = colors[3] // Dark color for knots
+                
+                cgContext.setFillColor(color.cgColor)
+                cgContext.fillEllipse(in: CGRect(x: x, y: y, width: knotSize, height: knotSize))
+            }
+            
+            // Add some lighter wood highlights
+            cgContext.setStrokeColor(UIColor(red: 0.9, green: 0.7, blue: 0.5, alpha: 0.4).cgColor)
+            cgContext.setLineWidth(0.5)
+            
+            for i in 0..<2 {
+                let y = CGFloat(i) * size.height/2 + CGFloat.random(in: -0.5...0.5)
+                cgContext.move(to: CGPoint(x: 0, y: y))
+                cgContext.addLine(to: CGPoint(x: size.width, y: y))
+                cgContext.strokePath()
+            }
+        }
+        return SKTexture(image: image)
     }
     
     func createStar() -> SKSpriteNode {
